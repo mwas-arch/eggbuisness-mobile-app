@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="eggs_accounting_app.Pages.CustomersPage"
+    Title="Customers">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="12">
+
+            <Label
+                Text="Customers"
+                FontSize="28"
+                FontAttributes="Bold"
+                HorizontalOptions="Center" />
+
+            <Entry
+                x:Name="NameEntry"
+                Placeholder="Customer name" />
+
+            <Entry
+                x:Name="PhoneEntry"
+                Placeholder="Phone number"
+                Keyboard="Telephone" />
+
+            <Entry
+                x:Name="AddressEntry"
+                Placeholder="Address" />
+
+            <Entry
+                x:Name="CreditLimitEntry"
+                Placeholder="Credit limit"
+                Keyboard="Numeric" />
+
+            <Button
+                Text="Add Customer"
+                Clicked="OnAddCustomerClicked" />
+
+            <ActivityIndicator
+                x:Name="LoadingIndicator"
+                IsVisible="False"
+                IsRunning="False" />
+
+            <Label
+                Text="Customer List"
+                FontSize="22"
+                FontAttributes="Bold"
+                Margin="0,15,0,0" />
+
+            <CollectionView
+                x:Name="CustomersCollection">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Border Padding="12" Margin="0,5">
+
+                            <VerticalStackLayout Spacing="4">
+
+                                <Label
+                                    Text="{Binding Name}"
+                                    FontSize="18"
+                                    FontAttributes="Bold" />
+
+                                <Label
+                                    Text="{Binding Phone}" />
+
+                                <Label
+                                    Text="{Binding Address}" />
+
+                                <Label
+                                    Text="{Binding CreditLimit, StringFormat='Credit Limit: Ksh {0:N2}'}" />
+
+                            </VerticalStackLayout>
+
+                        </Border>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+            <Button
+                Text="Refresh Customers"
+                Clicked="OnRefreshClicked" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

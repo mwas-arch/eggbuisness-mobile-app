@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="eggs_accounting_app.Pages.SuppliersPage"
+    Title="Suppliers">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+
+        <Label
+            Text="SUPPLIERS"
+            FontSize="28"
+            FontAttributes="Bold"
+            HorizontalOptions="Center" />
+
+        <Button
+            x:Name="RefreshButton"
+            Text="Refresh Suppliers"
+            Clicked="OnRefreshClicked" />
+
+        <ActivityIndicator
+            x:Name="LoadingIndicator"
+            IsRunning="False"
+            IsVisible="False" />
+
+        <CollectionView
+            x:Name="SuppliersList"
+            EmptyView="No suppliers found">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+
+                    <Border
+                        Padding="15"
+                        Margin="0,5">
+
+                        <VerticalStackLayout Spacing="5">
+
+                            <Label
+                                Text="{Binding Name}"
+                                FontSize="20"
+                                FontAttributes="Bold" />
+
+                            <Label
+                                Text="{Binding Phone}"
+                                FontSize="15" />
+
+                            <Label
+                                Text="{Binding Email}"
+                                FontSize="15" />
+
+                            <Label
+                                Text="{Binding Address}"
+                                FontSize="15" />
+
+                        </VerticalStackLayout>
+
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+</ContentPage>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="eggs_accounting_app.Pages.StockAdjustmentsPage"
+    Title="Stock Adjustments">
+
+    <ScrollView>
+
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label
+                Text="Stock Adjustment"
+                FontSize="26"
+                FontAttributes="Bold" />
+
+            <Label
+                Text="Record damaged, spoiled, returned or internally used eggs."
+                FontSize="14" />
+
+            <Label
+                Text="Inventory Batch"
+                FontAttributes="Bold" />
+
+            <Picker
+                x:Name="BatchPicker"
+                Title="Select inventory batch"
+                ItemDisplayBinding="{Binding DisplayName}" />
+
+            <Label
+                Text="Quantity of Eggs"
+                FontAttributes="Bold" />
+
+            <Entry
+                x:Name="QuantityEntry"
+                Placeholder="Enter number of eggs"
+                Keyboard="Numeric" />
+
+            <Label
+                Text="Reason"
+                FontAttributes="Bold" />
+
+            <Picker
+                x:Name="ReasonPicker"
+                Title="Select reason">
+
+                <Picker.Items>
+                    <x:String>Transit breakage</x:String>
+                    <x:String>Customer return</x:String>
+                    <x:String>Spoilage</x:String>
+                    <x:String>Internal use</x:String>
+                </Picker.Items>
+
+            </Picker>
+
+            <Button
+                Text="Record Adjustment"
+                Clicked="OnRecordAdjustmentClicked" />
+
+            <ActivityIndicator
+                x:Name="LoadingIndicator"
+                IsVisible="False"
+                IsRunning="False" />
+
+            <BoxView
+                HeightRequest="1"
+                Margin="0,10" />
+
+            <Label
+                Text="Important"
+                FontAttributes="Bold"
+                FontSize="18" />
+
+            <Label
+                Text="The selected quantity will be deducted from the inventory batch."
+                FontSize="14" />
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

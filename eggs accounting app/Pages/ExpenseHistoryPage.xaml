@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="eggs_accounting_app.Pages.ExpenseHistoryPage"
+    Title="Expense History">
+
+    <VerticalStackLayout
+        Padding="20"
+        Spacing="15">
+
+        <Label
+            Text="EXPENSE HISTORY"
+            FontSize="28"
+            FontAttributes="Bold"
+            HorizontalOptions="Center" />
+
+        <Button
+            x:Name="RefreshButton"
+            Text="Refresh Expenses"
+            Clicked="OnRefreshClicked" />
+
+        <ActivityIndicator
+            x:Name="LoadingIndicator"
+            IsVisible="False"
+            IsRunning="False" />
+
+        <CollectionView
+            x:Name="ExpensesList"
+            EmptyView="No expenses found">
+
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate>
+
+                    <Border
+                        Padding="15"
+                        Margin="0,5">
+
+                        <VerticalStackLayout Spacing="6">
+
+                            <Label
+                                Text="{Binding ExpenseNumber}"
+                                FontSize="20"
+                                FontAttributes="Bold" />
+
+                            <Label
+                                Text="{Binding Category}"
+                                FontSize="16" />
+
+                            <Label
+                                Text="{Binding Amount}"
+                                FontSize="18"
+                                FontAttributes="Bold" />
+
+                            <Label
+                                Text="{Binding Description}"
+                                FontSize="14" />
+
+                            <Label
+                                Text="{Binding ExpenseDate}"
+                                FontSize="14" />
+
+                        </VerticalStackLayout>
+
+                    </Border>
+
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+</ContentPage>

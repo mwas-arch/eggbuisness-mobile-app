@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="eggs_accounting_app.Pages.ProductPricesPage"
+    Title="Product Pricing">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label
+                Text="Product Pricing"
+                FontSize="26"
+                FontAttributes="Bold" />
+
+            <Label
+                Text="Set the selling prices for each egg grade."
+                FontSize="14" />
+
+            <Label
+                Text="Product"
+                FontAttributes="Bold" />
+
+            <Picker
+                x:Name="ProductPicker"
+                Title="Select product"
+                ItemDisplayBinding="{Binding DisplayName}" />
+
+            <Label
+                Text="Retail Price Per Egg"
+                FontAttributes="Bold" />
+
+            <Entry
+                x:Name="RetailPriceEntry"
+                Placeholder="e.g. 20"
+                Keyboard="Numeric" />
+
+            <Label
+                Text="Wholesale Price Per Crate"
+                FontAttributes="Bold" />
+
+            <Entry
+                x:Name="WholesalePriceEntry"
+                Placeholder="e.g. 550"
+                Keyboard="Numeric" />
+
+            <Label
+                Text="Bulk Price Per Crate"
+                FontAttributes="Bold" />
+
+            <Entry
+                x:Name="BulkPriceEntry"
+                Placeholder="e.g. 500"
+                Keyboard="Numeric" />
+
+            <Button
+                Text="Save Pricing"
+                Clicked="OnSavePricingClicked" />
+
+            <ActivityIndicator
+                x:Name="LoadingIndicator"
+                IsVisible="False"
+                IsRunning="False" />
+
+            <BoxView
+                HeightRequest="1"
+                Margin="0,10" />
+
+            <Label
+                Text="Current Pricing"
+                FontSize="20"
+                FontAttributes="Bold" />
+
+            <CollectionView
+                x:Name="PricesCollection"
+                EmptyView="No pricing records found.">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Frame
+                            Padding="12"
+                            Margin="0,5">
+
+                            <VerticalStackLayout Spacing="5">
+
+                                <Label
+                                    Text="{Binding Grade}"
+                                    FontAttributes="Bold"
+                                    FontSize="18" />
+
+                                <Label
+                                    Text="{Binding RetailDisplay}" />
+
+                                <Label
+                                    Text="{Binding WholesaleDisplay}" />
+
+                                <Label
+                                    Text="{Binding BulkDisplay}" />
+
+                                <Label
+                                    Text="{Binding EffectiveDisplay}"
+                                    FontSize="12" />
+
+                            </VerticalStackLayout>
+
+                        </Frame>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="eggs_accounting_app.MainPage"
+    Title="Dashboard">
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Padding="20"
+            Spacing="15">
+
+            <Label
+                Text="EGG BUSINESS"
+                FontSize="30"
+                FontAttributes="Bold"
+                HorizontalOptions="Center" />
+
+            <Label
+                Text="BUSINESS DASHBOARD"
+                FontSize="18"
+                HorizontalOptions="Center" />
+
+            <Button
+                Text="Refresh Dashboard"
+                Clicked="OnRefreshClicked" />
+
+            <ActivityIndicator
+                x:Name="LoadingIndicator"
+                IsVisible="False"
+                IsRunning="False" />
+
+            <!-- STOCK -->
+
+            <Border Padding="15">
+
+                <VerticalStackLayout Spacing="5">
+
+                    <Label
+                        Text="🥚 INVENTORY"
+                        FontSize="20"
+                        FontAttributes="Bold" />
+
+                    <Label
+                        x:Name="StockLabel"
+                        Text="Stock: Loading..." />
+
+                    <Label
+                        x:Name="CratesLabel"
+                        Text="Crates: Loading..." />
+
+                    <Label
+                        x:Name="LooseEggsLabel"
+                        Text="Loose Eggs: Loading..." />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- SALES -->
+
+            <Border Padding="15">
+
+                <VerticalStackLayout Spacing="5">
+
+                    <Label
+                        Text="💰 SALES"
+                        FontSize="20"
+                        FontAttributes="Bold" />
+
+                    <Label
+                        x:Name="TodaySalesLabel"
+                        Text="Today's Sales: Loading..." />
+
+                    <Label
+                        x:Name="TotalSalesLabel"
+                        Text="Total Sales: Loading..." />
+
+                    <Label
+                        x:Name="CreditLabel"
+                        Text="Outstanding Credit: Loading..." />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- EXPENSES -->
+
+            <Border Padding="15">
+
+                <VerticalStackLayout Spacing="5">
+
+                    <Label
+                        Text="💸 EXPENSES"
+                        FontSize="20"
+                        FontAttributes="Bold" />
+
+                    <Label
+                        x:Name="TodayExpensesLabel"
+                        Text="Today's Expenses: Loading..." />
+
+                    <Label
+                        x:Name="TotalExpensesLabel"
+                        Text="Total Expenses: Loading..." />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- PROFIT -->
+
+            <Border Padding="15">
+
+                <VerticalStackLayout Spacing="5">
+
+                    <Label
+                        Text="📊 PROFIT"
+                        FontSize="20"
+                        FontAttributes="Bold" />
+
+                    <Label
+                        x:Name="TodayProfitLabel"
+                        Text="Today's Profit: Loading..."
+                        FontSize="20"
+                        FontAttributes="Bold" />
+
+                    <Label
+                        x:Name="OverallProfitLabel"
+                        Text="Overall Profit: Loading..." />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- NAVIGATION -->
+
+            <Button
+                Text="Suppliers"
+                Clicked="OnSuppliersClicked" />
+
+            <Button
+                Text="Inventory"
+                Clicked="OnInventoryClicked" />
+            <Button
+                Text="Product Pricing"
+                Clicked="OnProductPricesClicked" />
+            
+
+            <Button
+                Text="Sales"
+                Clicked="OnSalesClicked" />
+            <Button
+                Text="Customers"
+                Clicked="OnCustomersClicked" />
+
+            <Button
+                Text="Expenses"
+                Clicked="OnExpensesClicked" />
+            <Button
+                Text="Customer Accounts"
+                Clicked="OnCustomerAccountsClicked" />
+            <Button
+                Text="Stock Adjustments"
+                Clicked="OnStockAdjustmentsClicked" />
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

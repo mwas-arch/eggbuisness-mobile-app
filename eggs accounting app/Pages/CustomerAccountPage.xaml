@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="eggs_accounting_app.Pages.CustomerAccountPage"
+    Title="Customer Account">
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Padding="20"
+            Spacing="12">
+
+            <Label
+                Text="Customer Account"
+                FontSize="28"
+                FontAttributes="Bold"
+                HorizontalOptions="Center" />
+
+            <Picker
+                x:Name="CustomerPicker"
+                Title="Select Customer"
+                SelectedIndexChanged="OnCustomerSelected" />
+
+            <ActivityIndicator
+                x:Name="LoadingIndicator"
+                IsVisible="False"
+                IsRunning="False" />
+
+            <Border
+                Padding="15"
+                Margin="0,10,0,0">
+
+                <VerticalStackLayout Spacing="6">
+
+                    <Label
+                        x:Name="CustomerNameLabel"
+                        Text="Customer: -"
+                        FontSize="20"
+                        FontAttributes="Bold" />
+
+                    <Label
+                        x:Name="PhoneLabel"
+                        Text="Phone: -" />
+
+                    <Label
+                        x:Name="CreditLimitLabel"
+                        Text="Credit Limit: Ksh 0.00" />
+
+                    <Label
+                        x:Name="TotalPurchasesLabel"
+                        Text="Total Purchases: Ksh 0.00" />
+
+                    <Label
+                        x:Name="TotalPaidLabel"
+                        Text="Total Paid: Ksh 0.00" />
+
+                    <Label
+                        x:Name="BalanceLabel"
+                        Text="Outstanding Balance: Ksh 0.00"
+                        FontAttributes="Bold" />
+
+                    <Label
+                        x:Name="AvailableCreditLabel"
+                        Text="Available Credit: Ksh 0.00"
+                        FontAttributes="Bold" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <Label
+                Text="Sales History"
+                FontSize="22"
+                FontAttributes="Bold"
+                Margin="0,10,0,0" />
+
+            <CollectionView
+                x:Name="SalesCollection">
+
+                <CollectionView.ItemTemplate>
+
+                    <DataTemplate>
+
+                        <Border
+                            Padding="12"
+                            Margin="0,5">
+
+                            <VerticalStackLayout Spacing="4">
+
+                                <Label
+                                    Text="{Binding Id, StringFormat='Sale #{0}'}"
+                                    FontAttributes="Bold" />
+
+                                <Label
+                                    Text="{Binding SaleDate, StringFormat='Date: {0:dd/MM/yyyy HH:mm}'}" />
+
+                                <Label
+                                    Text="{Binding PaymentMethod, StringFormat='Payment: {0}'}" />
+
+                                <Label
+                                    Text="{Binding TotalAmount, StringFormat='Total: Ksh {0:N2}'}" />
+
+                                <Label
+                                    Text="{Binding AmountPaid, StringFormat='Paid: Ksh {0:N2}'}" />
+
+                                <Label
+                                    Text="{Binding BalanceDue, StringFormat='Balance: Ksh {0:N2}'}" />
+
+                            </VerticalStackLayout>
+
+                        </Border>
+
+                    </DataTemplate>
+
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

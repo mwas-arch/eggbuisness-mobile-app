@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="eggs_accounting_app.Pages.SalesPage"
+    Title="Create Sale">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label
+                Text="Create Sale"
+                FontSize="28"
+                FontAttributes="Bold" />
+            <Label
+                Text="Customer"
+                FontAttributes="Bold" />
+
+            <Picker
+                x:Name="CustomerPicker"
+                Title="Select Customer" />
+
+            <Label Text="Product" />
+
+            <Picker
+                x:Name="ProductPicker"
+                Title="Select Product"
+                ItemDisplayBinding="{Binding Name}" />
+
+            <Label Text="Quantity (Crates)" />
+
+            <Entry
+                x:Name="CratesEntry"
+                Placeholder="Enter crates"
+                Keyboard="Numeric"
+                TextChanged="OnQuantityChanged"/>
+
+            <Label Text="Loose Eggs" />
+
+            <Entry
+                x:Name="LooseEggsEntry"
+                Placeholder="Enter loose eggs"
+                Keyboard="Numeric"
+                TextChanged="OnQuantityChanged"/>
+
+            <Label Text="Price Type" />
+
+            <Picker x:Name="PriceTypePicker"
+                    Title="Select Price Type"
+                    SelectedIndexChanged="OnPriceTypeChanged">
+                
+                <Picker.Items>
+                    <x:String>Retail</x:String>
+                    <x:String>Wholesale</x:String>
+                    <x:String>Bulk</x:String>
+                </Picker.Items>
+            </Picker>
+            <Label
+                x:Name="CurrentPriceLabel"
+                Text="Current Price: -"
+                FontAttributes="Bold"
+                FontSize="16" />
+            <Label
+                x:Name="EstimatedTotalLabel"
+                Text="Estimated Total: Ksh 0.00"
+                FontAttributes="Bold"
+                FontSize="18" />
+
+            <Label Text="Payment Method" />
+
+            <Picker x:Name="PaymentMethodPicker">
+                <Picker.Items>
+                    <x:String>Cash</x:String>
+                    <x:String>M-Pesa</x:String>
+                    <x:String>Bank Transfer</x:String>
+                    <x:String>Credit</x:String>
+                </Picker.Items>
+            </Picker>
+
+            <Label Text="Amount Paid" />
+
+            <Entry
+                x:Name="AmountPaidEntry"
+                Placeholder="Enter amount paid"
+                Keyboard="Numeric" />
+
+            <Button
+                x:Name="CreateSaleButton"
+                Text="Create Sale"
+                Clicked="OnCreateSaleClicked" />
+            <Button
+                Text="Sales History"
+                Clicked="OnSalesHistoryClicked" />
+
+            <ActivityIndicator
+                x:Name="LoadingIndicator"
+                IsVisible="False"
+                IsRunning="False" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>  

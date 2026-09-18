@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="eggs_accounting_app.Pages.ExpensesPage"
+    Title="Expenses">
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Padding="20"
+            Spacing="15">
+
+            <Label
+                Text="EXPENSES"
+                FontSize="28"
+                FontAttributes="Bold"
+                HorizontalOptions="Center" />
+
+            <Label Text="Category" />
+
+            <Picker
+                x:Name="CategoryPicker"
+                Title="Select category">
+
+                <Picker.Items>
+                    <x:String>Transport</x:String>
+                    <x:String>Packaging</x:String>
+                    <x:String>Electricity</x:String>
+                    <x:String>Water</x:String>
+                    <x:String>Rent</x:String>
+                    <x:String>Wages</x:String>
+                    <x:String>Supplies</x:String>
+                    <x:String>Maintenance</x:String>
+                    <x:String>Other</x:String>
+                </Picker.Items>
+
+            </Picker>
+
+            <Label Text="Amount" />
+
+            <Entry
+                x:Name="AmountEntry"
+                Placeholder="Enter amount"
+                Keyboard="Numeric" />
+
+            <Label Text="Description" />
+
+            <Editor
+                x:Name="DescriptionEditor"
+                Placeholder="Enter description"
+                AutoSize="TextChanges"
+                HeightRequest="100" />
+
+            <Button
+                x:Name="AddExpenseButton"
+                Text="Add Expense"
+                Clicked="OnAddExpenseClicked" />
+
+            <Button
+                Text="Expense History"
+                Clicked="OnExpenseHistoryClicked" />
+
+            <ActivityIndicator
+                x:Name="LoadingIndicator"
+                IsVisible="False"
+                IsRunning="False" />
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>
