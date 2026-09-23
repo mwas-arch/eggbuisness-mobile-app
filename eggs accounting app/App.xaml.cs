@@ -1,16 +1,37 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using eggs_accounting_app.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace eggs_accounting_app;
 
 public partial class App : Application
 {
-    public App()
+    private readonly IDbContextFactory<EggBusinessDbContext> _dbFactory;
+
+    public App(
+        IDbContextFactory<EggBusinessDbContext> dbFactory)
     {
         InitializeComponent();
+
+        _dbFactory = dbFactory;
+
+        MainPage = new AppShell();
+
+        InitializeDatabaseAsync();
     }
 
-    protected override Window CreateWindow(IActivationState? activationState)
+    private async void InitializeDatabaseAsync()
     {
-        return new Window(new AppShell());
+        try
+        {
+            await using var db =
+                await _dbFactory.CreateDbContextAsync();
+
+            await db.Database.EnsureCreatedAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(
+                $"Database initialization failed: {ex}");
+        }
     }
 }

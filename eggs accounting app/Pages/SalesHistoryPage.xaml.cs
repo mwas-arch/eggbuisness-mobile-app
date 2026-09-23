@@ -1,3 +1,4 @@
+
 using eggs_accounting_app.Models;
 using eggs_accounting_app.Services;
 
@@ -5,18 +6,22 @@ namespace eggs_accounting_app.Pages;
 
 public partial class SalesHistoryPage : ContentPage
 {
-    private readonly ApiService _apiService;
+    private readonly LocalDatabaseService _databaseService;
 
-    public SalesHistoryPage()
+    public SalesHistoryPage(
+        LocalDatabaseService databaseService)
     {
         InitializeComponent();
 
-        _apiService = new ApiService();
+        _databaseService = databaseService;
 
-        LoadSales();
+        Loaded += async (_, _) =>
+        {
+            await LoadSalesAsync();
+        };
     }
 
-    private async void LoadSales()
+    private async Task LoadSalesAsync()
     {
         try
         {
@@ -24,32 +29,37 @@ public partial class SalesHistoryPage : ContentPage
             LoadingIndicator.IsRunning = true;
             RefreshButton.IsEnabled = false;
 
-            var sales = await _apiService.GetSalesAsync();
+            var sales =
+                await _databaseService.GetSalesAsync();
 
-            var history = sales.Select(s => new SaleHistoryItem
-            {
-                SaleNumber = $"Sale #{s.Id}",
+            var history =
+                sales.Select(s => new SaleHistoryItem
+                {
+                    SaleNumber =
+                        $"Sale #{s.Id}",
 
-                CustomerName =
-                    string.IsNullOrWhiteSpace(s.CustomerName)
-                        ? "Walk-in Customer"
-                        : s.CustomerName,
+                    CustomerName =
+                        string.IsNullOrWhiteSpace(
+                            s.CustomerName)
+                            ? "Walk-in Customer"
+                            : s.CustomerName,
 
-                SaleDate =
-                    $"Date: {s.SaleDate.ToLocalTime():dd/MM/yyyy HH:mm}",
+                    SaleDate =
+                        $"Date: " +
+                        $"{s.SaleDate.ToLocalTime():dd/MM/yyyy HH:mm}",
 
-                PaymentMethod =
-                    $"Payment: {s.PaymentMethod}",
+                    PaymentMethod =
+                        $"Payment: {s.PaymentMethod}",
 
-                TotalAmount =
-                    $"Total: Ksh {s.TotalAmount:N2}",
+                    TotalAmount =
+                        $"Total: Ksh {s.TotalAmount:N2}",
 
-                AmountPaid =
-                    $"Paid: Ksh {s.AmountPaid:N2}",
+                    AmountPaid =
+                        $"Paid: Ksh {s.AmountPaid:N2}",
 
-                BalanceDue =
-                    $"Balance: Ksh {s.BalanceDue:N2}"
-            }).ToList();
+                    BalanceDue =
+                        $"Balance: Ksh {s.BalanceDue:N2}"
+                }).ToList();
 
             SalesList.ItemsSource = history;
         }
@@ -68,11 +78,11 @@ public partial class SalesHistoryPage : ContentPage
         }
     }
 
-    private void OnRefreshClicked(
+    private async void OnRefreshClicked(
         object? sender,
         EventArgs e)
     {
-        LoadSales();
+        await LoadSalesAsync();
     }
 }
 
@@ -92,3 +102,4 @@ public class SaleHistoryItem
 
     public string BalanceDue { get; set; } = string.Empty;
 }
+

@@ -7,7 +7,10 @@
     Title="Product Pricing">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="15">
+
+        <VerticalStackLayout
+            Padding="20"
+            Spacing="15">
 
             <Label
                 Text="Product Pricing"
@@ -15,8 +18,76 @@
                 FontAttributes="Bold" />
 
             <Label
-                Text="Set the selling prices for each egg grade."
+                Text="Create products and set their selling prices."
                 FontSize="14" />
+
+            <!-- CREATE PRODUCT -->
+
+            <Border
+                Padding="15">
+
+                <VerticalStackLayout
+                    Spacing="10">
+
+                    <Label
+                        Text="Add New Product"
+                        FontSize="21"
+                        FontAttributes="Bold" />
+
+                    <Label
+                        Text="Product Name"
+                        FontAttributes="Bold" />
+
+                    <Entry
+                        x:Name="ProductNameEntry"
+                        Placeholder="e.g. Eggs" />
+
+                    <Label
+                        Text="Egg Grade"
+                        FontAttributes="Bold" />
+
+                    <Picker
+                        x:Name="ProductGradePicker"
+                        Title="Select egg grade">
+
+                        <Picker.Items>
+                            <x:String>Small</x:String>
+                            <x:String>Medium</x:String>
+                            <x:String>Large</x:String>
+                            <x:String>Extra Large</x:String>
+                        </Picker.Items>
+
+                    </Picker>
+
+                    <Label
+                        Text="Eggs Per Crate"
+                        FontAttributes="Bold" />
+
+                    <Entry
+                        x:Name="EggsPerCrateEntry"
+                        Placeholder="e.g. 30"
+                        Keyboard="Numeric"
+                        Text="30" />
+
+                    <Button
+                        x:Name="AddProductButton"
+                        Text="Add Product"
+                        Clicked="OnAddProductClicked" />
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <BoxView
+                HeightRequest="1"
+                Margin="0,5" />
+
+            <!-- SET PRICING -->
+
+            <Label
+                Text="Set Product Pricing"
+                FontSize="21"
+                FontAttributes="Bold" />
 
             <Label
                 Text="Product"
@@ -67,6 +138,8 @@
                 HeightRequest="1"
                 Margin="0,10" />
 
+            <!-- CURRENT PRICING -->
+
             <Label
                 Text="Current Pricing"
                 FontSize="20"
@@ -83,7 +156,8 @@
                             Padding="12"
                             Margin="0,5">
 
-                            <VerticalStackLayout Spacing="5">
+                            <VerticalStackLayout
+                                Spacing="5">
 
                                 <Label
                                     Text="{Binding Grade}"
@@ -113,6 +187,8 @@
             </CollectionView>
 
         </VerticalStackLayout>
+
     </ScrollView>
 
 </ContentPage>
+

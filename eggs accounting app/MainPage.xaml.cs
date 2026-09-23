@@ -1,71 +1,133 @@
-﻿using eggs_accounting_app.Pages;
-using eggs_accounting_app.Services;
+﻿
 using eggs_accounting_app.Models;
+using eggs_accounting_app.Pages;
+using eggs_accounting_app.Services;
 
 namespace eggs_accounting_app;
 
 public partial class MainPage : ContentPage
 {
-    private readonly ApiService _apiService;
+    private readonly LocalDatabaseService _databaseService;
 
-    public MainPage()
+    public MainPage(
+        LocalDatabaseService databaseService)
     {
         InitializeComponent();
 
-        _apiService = new ApiService();
+        _databaseService = databaseService;
 
-        LoadDashboard();
+        Loaded += async (_, _) =>
+        {
+            await LoadDashboardAsync();
+        };
     }
 
-    private async void LoadDashboard()
+    private async Task LoadDashboardAsync()
     {
         try
         {
             LoadingIndicator.IsVisible = true;
             LoadingIndicator.IsRunning = true;
 
-            var dashboard =
-                await _apiService.GetDashboardAsync();
+            var inventory =
+                await _databaseService.GetInventoryAsync();
 
-            if (dashboard == null)
-            {
-                await DisplayAlertAsync(
-                    "Error",
-                    "No dashboard data was returned.",
-                    "OK");
+            var sales =
+                await _databaseService.GetSalesAsync();
 
-                return;
-            }
+            var expenses =
+                await _databaseService.GetExpensesAsync();
+
+            var today =
+                DateTime.Today;
+
+            // -----------------------------
+            // INVENTORY
+            // -----------------------------
+
+            int totalEggs =
+                inventory.Sum(b => b.EggsRemaining);
+
+            int crates =
+                totalEggs / 30;
+
+            int looseEggs =
+                totalEggs % 30;
+
+            // -----------------------------
+            // SALES
+            // -----------------------------
+
+            decimal totalSales =
+                sales.Sum(s => s.TotalAmount);
+
+            decimal outstandingCredit =
+                sales.Sum(s => s.BalanceDue);
+
+            decimal todaySales =
+                sales
+                    .Where(s =>
+                        s.SaleDate.ToLocalTime().Date ==
+                        today)
+                    .Sum(s => s.TotalAmount);
+
+            // -----------------------------
+            // EXPENSES
+            // -----------------------------
+
+            decimal totalExpenses =
+                expenses.Sum(e => e.Amount);
+
+            decimal todayExpenses =
+                expenses
+                    .Where(e =>
+                        e.ExpenseDate.ToLocalTime().Date ==
+                        today)
+                    .Sum(e => e.Amount);
+
+            // -----------------------------
+            // PROFIT
+            // -----------------------------
+
+            decimal todayProfit =
+                todaySales - todayExpenses;
+
+            decimal overallProfit =
+                totalSales - totalExpenses;
+
+            // -----------------------------
+            // UPDATE DASHBOARD
+            // -----------------------------
 
             StockLabel.Text =
-                $"Total Eggs: {dashboard.Inventory.TotalEggs}";
+                $"Total Eggs: {totalEggs}";
 
             CratesLabel.Text =
-                $"Crates: {dashboard.Inventory.Crates}";
+                $"Crates: {crates}";
 
             LooseEggsLabel.Text =
-                $"Loose Eggs: {dashboard.Inventory.LooseEggs}";
+                $"Loose Eggs: {looseEggs}";
 
             TodaySalesLabel.Text =
-                $"Today's Sales: Ksh {dashboard.Sales.TodaySales:N2}";
+                $"Today's Sales: Ksh {todaySales:N2}";
 
             TotalSalesLabel.Text =
-                $"Total Sales: Ksh {dashboard.Sales.TotalSales:N2}";
+                $"Total Sales: Ksh {totalSales:N2}";
 
             CreditLabel.Text =
-                $"Outstanding Credit: Ksh {dashboard.Sales.OutstandingCredit:N2}";
+                $"Outstanding Credit: Ksh {outstandingCredit:N2}";
 
             TodayExpensesLabel.Text =
-                $"Today's Expenses: Ksh {dashboard.Expenses.TodayExpenses:N2}";
+                $"Today's Expenses: Ksh {todayExpenses:N2}";
 
             TotalExpensesLabel.Text =
-                $"Total Expenses: Ksh {dashboard.Expenses.TotalExpenses:N2}";
+                $"Total Expenses: Ksh {totalExpenses:N2}";
 
             TodayProfitLabel.Text =
-                $"Today's Profit: Ksh {dashboard.Profit.Today:N2}";
+                $"Today's Profit: Ksh {todayProfit:N2}";
 
             OverallProfitLabel.Text =
-                $"Overall Profit: Ksh {dashboard.Profit.Overall:N2}";
+                $"Overall Profit: Ksh {overallProfit:N2}";
         }
         catch (Exception ex)
         {
@@ -81,11 +143,11 @@ public partial class MainPage : ContentPage
         }
     }
 
-    private void OnRefreshClicked(
+    private async void OnRefreshClicked(
         object? sender,
         EventArgs e)
     {
-        LoadDashboard();
+        await LoadDashboardAsync();
     }
 
     private async void OnSuppliersClicked(
@@ -119,6 +181,7 @@ public partial class MainPage : ContentPage
         await Shell.Current.GoToAsync(
             nameof(ExpensesPage));
     }
+
     private async void OnCustomersClicked(
         object? sender,
         EventArgs e)
@@ -126,6 +189,7 @@ public partial class MainPage : ContentPage
         await Shell.Current.GoToAsync(
             nameof(CustomersPage));
     }
+
     private async void OnCustomerAccountsClicked(
         object? sender,
         EventArgs e)
@@ -133,6 +197,7 @@ public partial class MainPage : ContentPage
         await Shell.Current.GoToAsync(
             nameof(CustomerAccountPage));
     }
+
     private async void OnStockAdjustmentsClicked(
         object? sender,
         EventArgs e)
@@ -140,6 +205,7 @@ public partial class MainPage : ContentPage
         await Shell.Current.GoToAsync(
             nameof(StockAdjustmentsPage));
     }
+
     private async void OnProductPricesClicked(
         object? sender,
         EventArgs e)
@@ -147,5 +213,6 @@ public partial class MainPage : ContentPage
         await Shell.Current.GoToAsync(
             nameof(ProductPricesPage));
     }
-   
-}   
+}
+
+

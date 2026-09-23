@@ -6,63 +6,116 @@
     x:Class="eggs_accounting_app.Pages.SuppliersPage"
     Title="Suppliers">
 
-    <VerticalStackLayout Padding="20" Spacing="15">
+    <ScrollView>
 
-        <Label
-            Text="SUPPLIERS"
-            FontSize="28"
-            FontAttributes="Bold"
-            HorizontalOptions="Center" />
+        <VerticalStackLayout
+            Padding="20"
+            Spacing="15">
 
-        <Button
-            x:Name="RefreshButton"
-            Text="Refresh Suppliers"
-            Clicked="OnRefreshClicked" />
+            <Label
+                Text="SUPPLIERS"
+                FontSize="28"
+                FontAttributes="Bold"
+                HorizontalOptions="Center" />
 
-        <ActivityIndicator
-            x:Name="LoadingIndicator"
-            IsRunning="False"
-            IsVisible="False" />
+            <!-- ADD SUPPLIER -->
 
-        <CollectionView
-            x:Name="SuppliersList"
-            EmptyView="No suppliers found">
+            <Border
+                Padding="15">
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <VerticalStackLayout Spacing="10">
 
-                    <Border
-                        Padding="15"
-                        Margin="0,5">
+                    <Label
+                        Text="Add New Supplier"
+                        FontSize="22"
+                        FontAttributes="Bold" />
 
-                        <VerticalStackLayout Spacing="5">
+                    <Entry
+                        x:Name="SupplierNameEntry"
+                        Placeholder="Supplier Name" />
 
-                            <Label
-                                Text="{Binding Name}"
-                                FontSize="20"
-                                FontAttributes="Bold" />
+                    <Entry
+                        x:Name="SupplierPhoneEntry"
+                        Placeholder="Phone Number"
+                        Keyboard="Telephone" />
 
-                            <Label
-                                Text="{Binding Phone}"
-                                FontSize="15" />
+                    <Entry
+                        x:Name="SupplierEmailEntry"
+                        Placeholder="Email Address"
+                        Keyboard="Email" />
 
-                            <Label
-                                Text="{Binding Email}"
-                                FontSize="15" />
+                    <Entry
+                        x:Name="SupplierAddressEntry"
+                        Placeholder="Address" />
 
-                            <Label
-                                Text="{Binding Address}"
-                                FontSize="15" />
+                    <Button
+                        x:Name="AddSupplierButton"
+                        Text="Add Supplier"
+                        Clicked="OnAddSupplierClicked" />
 
-                        </VerticalStackLayout>
+                </VerticalStackLayout>
 
-                    </Border>
+            </Border>
 
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
+            <Button
+                x:Name="RefreshButton"
+                Text="Refresh Suppliers"
+                Clicked="OnRefreshClicked" />
 
-        </CollectionView>
+            <ActivityIndicator
+                x:Name="LoadingIndicator"
+                IsRunning="False"
+                IsVisible="False" />
 
-    </VerticalStackLayout>
+            <!-- SUPPLIER LIST -->
+
+            <Label
+                Text="Supplier List"
+                FontSize="22"
+                FontAttributes="Bold" />
+
+            <CollectionView
+                x:Name="SuppliersList"
+                EmptyView="No suppliers found">
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+
+                        <Border
+                            Padding="15"
+                            Margin="0,5">
+
+                            <VerticalStackLayout Spacing="5">
+
+                                <Label
+                                    Text="{Binding Name}"
+                                    FontSize="20"
+                                    FontAttributes="Bold" />
+
+                                <Label
+                                    Text="{Binding Phone}"
+                                    FontSize="15" />
+
+                                <Label
+                                    Text="{Binding Email}"
+                                    FontSize="15" />
+
+                                <Label
+                                    Text="{Binding Address}"
+                                    FontSize="15" />
+
+                            </VerticalStackLayout>
+
+                        </Border>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
 
 </ContentPage>
+

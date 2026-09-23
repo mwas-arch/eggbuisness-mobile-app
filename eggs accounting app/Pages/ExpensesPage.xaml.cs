@@ -1,3 +1,4 @@
+
 using eggs_accounting_app.Models;
 using eggs_accounting_app.Services;
 
@@ -5,13 +6,14 @@ namespace eggs_accounting_app.Pages;
 
 public partial class ExpensesPage : ContentPage
 {
-    private readonly ApiService _apiService;
+    private readonly LocalDatabaseService _databaseService;
 
-    public ExpensesPage()
+    public ExpensesPage(
+        LocalDatabaseService databaseService)
     {
         InitializeComponent();
 
-        _apiService = new ApiService();
+        _databaseService = databaseService;
 
         CategoryPicker.SelectedIndex = 0;
     }
@@ -53,49 +55,39 @@ public partial class ExpensesPage : ContentPage
 
                 Amount = amount,
 
-                Description = DescriptionEditor.Text,
+                Description =
+                    DescriptionEditor.Text?.Trim(),
 
-                ExpenseDate = DateTime.UtcNow,
+                ExpenseDate =
+                    DateTime.UtcNow,
 
-                CreatedBy = "Mobile App"
+                CreatedBy =
+                    "Mobile App"
             };
 
             LoadingIndicator.IsVisible = true;
             LoadingIndicator.IsRunning = true;
             AddExpenseButton.IsEnabled = false;
 
-            var response =
-                await _apiService.CreateExpenseAsync(expense);
+            await _databaseService.AddExpenseAsync(
+                expense);
 
-            var message =
-                await response.Content.ReadAsStringAsync();
+            await DisplayAlertAsync(
+                "Expense Added",
+                $"Expense added successfully.\n\n" +
+                $"Category: {expense.Category}\n" +
+                $"Amount: Ksh {expense.Amount:N2}\n" +
+                $"Description: {expense.Description}",
+                "OK");
 
-            if (response.IsSuccessStatusCode)
-            {
-                await DisplayAlertAsync(
-                    "Expense Added",
-                    $"Expense added successfully.\n\n" +
-                    $"Category: {expense.Category}\n" +
-                    $"Amount: Ksh {expense.Amount:N2}\n" +
-                    $"Description: {expense.Description}",
-                    "OK");
-
-                AmountEntry.Text = "";
-                DescriptionEditor.Text = "";
-            }
-            else
-            {
-                await DisplayAlertAsync(
-                    "Expense Failed",
-                    message,
-                    "OK");
-            }
+            AmountEntry.Text = string.Empty;
+            DescriptionEditor.Text = string.Empty;
         }
         catch (Exception ex)
         {
             await DisplayAlertAsync(
-                "Connection Error",
-                ex.Message,
+                "Error",
+                $"Could not add expense.\n\n{ex.Message}",
                 "OK");
         }
         finally
@@ -114,3 +106,4 @@ public partial class ExpensesPage : ContentPage
             nameof(ExpenseHistoryPage));
     }
 }
+

@@ -1,3 +1,4 @@
+
 using eggs_accounting_app.Models;
 using eggs_accounting_app.Services;
 
@@ -5,18 +6,22 @@ namespace eggs_accounting_app.Pages;
 
 public partial class StockAdjustmentsPage : ContentPage
 {
-    private readonly ApiService _apiService;
+    private readonly LocalDatabaseService _databaseService;
 
-    public StockAdjustmentsPage()
+    public StockAdjustmentsPage(
+        LocalDatabaseService databaseService)
     {
         InitializeComponent();
 
-        _apiService = new ApiService();
+        _databaseService = databaseService;
 
-        LoadInventory();
+        Loaded += async (_, _) =>
+        {
+            await LoadInventoryAsync();
+        };
     }
 
-    private async void LoadInventory()
+    private async Task LoadInventoryAsync()
     {
         try
         {
@@ -24,7 +29,7 @@ public partial class StockAdjustmentsPage : ContentPage
             LoadingIndicator.IsRunning = true;
 
             var inventory =
-                await _apiService.GetInventoryAsync();
+                await _databaseService.GetInventoryAsync();
 
             var batches = inventory
                 .Select(batch => new InventoryBatchDisplay
@@ -32,8 +37,10 @@ public partial class StockAdjustmentsPage : ContentPage
                     Id = batch.Id,
                     Grade = batch.Grade,
                     EggsRemaining = batch.EggsRemaining,
+
                     DisplayName =
-                        $"Batch #{batch.Id} - {batch.Grade} - " +
+                        $"Batch #{batch.Id} - " +
+                        $"{batch.Grade} - " +
                         $"{batch.EggsRemaining} eggs remaining"
                 })
                 .ToList();
@@ -58,7 +65,8 @@ public partial class StockAdjustmentsPage : ContentPage
         object? sender,
         EventArgs e)
     {
-        if (BatchPicker.SelectedItem is not InventoryBatchDisplay batch)
+        if (BatchPicker.SelectedItem
+            is not InventoryBatchDisplay batch)
         {
             await DisplayAlertAsync(
                 "Missing Batch",
@@ -85,7 +93,8 @@ public partial class StockAdjustmentsPage : ContentPage
         {
             await DisplayAlertAsync(
                 "Insufficient Stock",
-                $"Only {batch.EggsRemaining} eggs remain in this batch.",
+                $"Only {batch.EggsRemaining} eggs remain " +
+                $"in this batch.",
                 "OK");
 
             return;
@@ -118,39 +127,30 @@ public partial class StockAdjustmentsPage : ContentPage
                 Timestamp = DateTime.UtcNow
             };
 
-            var response =
-                await _apiService.CreateStockAdjustmentAsync(
-                    adjustment);
+            // This method saves the adjustment AND
+            // deducts the eggs from the inventory.
+            await _databaseService.AddStockAdjustmentAsync(
+                adjustment);
 
-            if (response.IsSuccessStatusCode)
-            {
-                await DisplayAlertAsync(
-                    "Success",
-                    $"{quantity} eggs have been deducted from Batch #{batch.Id}.",
-                    "OK");
+            await DisplayAlertAsync(
+                "Success",
+                $"{quantity} eggs have been deducted " +
+                $"from Batch #{batch.Id}.",
+                "OK");
 
-                QuantityEntry.Text = string.Empty;
-                ReasonPicker.SelectedItem = null;
-                BatchPicker.SelectedItem = null;
+            QuantityEntry.Text = string.Empty;
+            ReasonPicker.SelectedItem = null;
+            BatchPicker.SelectedItem = null;
 
-                LoadInventory();
-            }
-            else
-            {
-                var error =
-                    await response.Content.ReadAsStringAsync();
-
-                await DisplayAlertAsync(
-                    "Error",
-                    $"Could not record adjustment.\n\n{error}",
-                    "OK");
-            }
+            // Reload from local SQLite database.
+            await LoadInventoryAsync();
         }
         catch (Exception ex)
         {
             await DisplayAlertAsync(
                 "Error",
-                $"Could not record adjustment.\n\n{ex.Message}",
+                $"Could not record adjustment.\n\n" +
+                $"{ex.Message}",
                 "OK");
         }
         finally

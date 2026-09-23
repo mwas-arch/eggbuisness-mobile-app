@@ -1,21 +1,27 @@
+
+using eggs_accounting_app.Models;
 using eggs_accounting_app.Services;
 
 namespace eggs_accounting_app.Pages;
 
 public partial class ExpenseHistoryPage : ContentPage
 {
-    private readonly ApiService _apiService;
+    private readonly LocalDatabaseService _databaseService;
 
-    public ExpenseHistoryPage()
+    public ExpenseHistoryPage(
+        LocalDatabaseService databaseService)
     {
         InitializeComponent();
 
-        _apiService = new ApiService();
+        _databaseService = databaseService;
 
-        LoadExpenses();
+        Loaded += async (_, _) =>
+        {
+            await LoadExpensesAsync();
+        };
     }
 
-    private async void LoadExpenses()
+    private async Task LoadExpensesAsync()
     {
         try
         {
@@ -24,7 +30,7 @@ public partial class ExpenseHistoryPage : ContentPage
             RefreshButton.IsEnabled = false;
 
             var expenses =
-                await _apiService.GetExpensesAsync();
+                await _databaseService.GetExpensesAsync();
 
             var history = expenses
                 .Select(expense => new ExpenseHistoryItem
@@ -70,19 +76,25 @@ public partial class ExpenseHistoryPage : ContentPage
         object? sender,
         EventArgs e)
     {
-        LoadExpenses();
+        LoadExpensesAsync();
     }
 }
 
 public class ExpenseHistoryItem
 {
-    public string ExpenseNumber { get; set; } = string.Empty;
+    public string ExpenseNumber { get; set; } =
+        string.Empty;
 
-    public string Category { get; set; } = string.Empty;
+    public string Category { get; set; } =
+        string.Empty;
 
-    public string Amount { get; set; } = string.Empty;
+    public string Amount { get; set; } =
+        string.Empty;
 
-    public string Description { get; set; } = string.Empty;
+    public string Description { get; set; } =
+        string.Empty;
 
-    public string ExpenseDate { get; set; } = string.Empty;
+    public string ExpenseDate { get; set; } =
+        string.Empty;
 }
+

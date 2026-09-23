@@ -5,25 +5,30 @@ namespace eggs_accounting_app.Pages;
 
 public partial class CustomersPage : ContentPage
 {
-    private readonly ApiService _apiService;
+    private readonly LocalDatabaseService _databaseService;
 
-    public CustomersPage()
+    public CustomersPage(
+        LocalDatabaseService databaseService)
     {
         InitializeComponent();
 
-        _apiService = new ApiService();
+        _databaseService = databaseService;
 
-        LoadCustomers();
+        Loaded += async (_, _) =>
+        {
+            await LoadCustomersAsync();
+        };
     }
 
-    private async void LoadCustomers()
+    private async Task LoadCustomersAsync()
     {
         try
         {
             LoadingIndicator.IsVisible = true;
             LoadingIndicator.IsRunning = true;
 
-            var customers = await _apiService.GetCustomersAsync();
+            var customers =
+                await _databaseService.GetCustomersAsync();
 
             CustomersCollection.ItemsSource = customers;
         }
@@ -70,6 +75,16 @@ public partial class CustomersPage : ContentPage
             return;
         }
 
+        if (creditLimit < 0)
+        {
+            await DisplayAlertAsync(
+                "Invalid Credit Limit",
+                "Credit limit cannot be negative.",
+                "OK");
+
+            return;
+        }
+
         try
         {
             LoadingIndicator.IsVisible = true;
@@ -78,37 +93,28 @@ public partial class CustomersPage : ContentPage
             var customer = new Customer
             {
                 Name = NameEntry.Text.Trim(),
+
                 Phone = PhoneEntry.Text?.Trim(),
+
                 Address = AddressEntry.Text?.Trim(),
+
                 CreditLimit = creditLimit
             };
 
-            var response =
-                await _apiService.CreateCustomerAsync(customer);
+            await _databaseService.AddCustomerAsync(
+                customer);
 
-            if (response.IsSuccessStatusCode)
-            {
-                await DisplayAlertAsync(
-                    "Success",
-                    "Customer added successfully.",
-                    "OK");
+            await DisplayAlertAsync(
+                "Success",
+                "Customer added successfully.",
+                "OK");
 
-                NameEntry.Text = string.Empty;
-                PhoneEntry.Text = string.Empty;
-                AddressEntry.Text = string.Empty;
-                CreditLimitEntry.Text = string.Empty;
+            NameEntry.Text = string.Empty;
+            PhoneEntry.Text = string.Empty;
+            AddressEntry.Text = string.Empty;
+            CreditLimitEntry.Text = string.Empty;
 
-                LoadCustomers();
-            }
-            else
-            {
-                var error = await response.Content.ReadAsStringAsync();
-
-                await DisplayAlertAsync(
-                    "Error",
-                    $"Customer could not be added.\n\n{error}",
-                    "OK");
-            }
+            await LoadCustomersAsync();
         }
         catch (Exception ex)
         {
@@ -128,6 +134,6 @@ public partial class CustomersPage : ContentPage
         object? sender,
         EventArgs e)
     {
-        LoadCustomers();
+        LoadCustomersAsync();
     }
 }

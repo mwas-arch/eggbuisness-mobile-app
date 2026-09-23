@@ -1,3 +1,4 @@
+
 using eggs_accounting_app.Models;
 using eggs_accounting_app.Services;
 
@@ -5,18 +6,22 @@ namespace eggs_accounting_app.Pages;
 
 public partial class SuppliersPage : ContentPage
 {
-    private readonly ApiService _apiService;
+    private readonly LocalDatabaseService _databaseService;
 
-    public SuppliersPage()
+    public SuppliersPage(
+        LocalDatabaseService databaseService)
     {
         InitializeComponent();
 
-        _apiService = new ApiService();
+        _databaseService = databaseService;
 
-        LoadSuppliersAsync();
+        Loaded += async (_, _) =>
+        {
+            await LoadSuppliersAsync();
+        };
     }
 
-    private async void LoadSuppliersAsync()
+    private async Task LoadSuppliersAsync()
     {
         try
         {
@@ -25,7 +30,7 @@ public partial class SuppliersPage : ContentPage
             RefreshButton.IsEnabled = false;
 
             List<Supplier> suppliers =
-                await _apiService.GetSuppliersAsync();
+                await _databaseService.GetSuppliersAsync();
 
             SuppliersList.ItemsSource = suppliers;
         }
@@ -44,10 +49,86 @@ public partial class SuppliersPage : ContentPage
         }
     }
 
-    private void OnRefreshClicked(
+    private async void OnAddSupplierClicked(
         object? sender,
         EventArgs e)
     {
-        LoadSuppliersAsync();
+        try
+        {
+            string name =
+                SupplierNameEntry.Text?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                await DisplayAlertAsync(
+                    "Validation",
+                    "Please enter the supplier name.",
+                    "OK");
+
+                return;
+            }
+
+            AddSupplierButton.IsEnabled = false;
+
+            var supplier = new Supplier
+            {
+                Name = name,
+
+                Phone =
+                    string.IsNullOrWhiteSpace(
+                        SupplierPhoneEntry.Text)
+                        ? null
+                        : SupplierPhoneEntry.Text.Trim(),
+
+                Email =
+                    string.IsNullOrWhiteSpace(
+                        SupplierEmailEntry.Text)
+                        ? null
+                        : SupplierEmailEntry.Text.Trim(),
+
+                Address =
+                    string.IsNullOrWhiteSpace(
+                        SupplierAddressEntry.Text)
+                        ? null
+                        : SupplierAddressEntry.Text.Trim(),
+
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _databaseService.AddSupplierAsync(
+                supplier);
+
+            await DisplayAlertAsync(
+                "Success",
+                $"Supplier '{supplier.Name}' was added successfully.",
+                "OK");
+
+            // Clear form
+            SupplierNameEntry.Text = string.Empty;
+            SupplierPhoneEntry.Text = string.Empty;
+            SupplierEmailEntry.Text = string.Empty;
+            SupplierAddressEntry.Text = string.Empty;
+
+            // Reload local SQLite data
+            await LoadSuppliersAsync();
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlertAsync(
+                "Error",
+                $"Could not add supplier.\n\n{ex.Message}",
+                "OK");
+        }
+        finally
+        {
+            AddSupplierButton.IsEnabled = true;
+        }
+    }
+
+    private async void OnRefreshClicked(
+        object? sender,
+        EventArgs e)
+    {
+        await LoadSuppliersAsync();
     }
 }

@@ -1,29 +1,35 @@
 using eggs_accounting_app.Models;
 using eggs_accounting_app.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace eggs_accounting_app.Pages;
 
 public partial class CustomerAccountPage : ContentPage
 {
-    private readonly ApiService _apiService;
+    private readonly LocalDatabaseService _databaseService;
 
-    public CustomerAccountPage()
+    public CustomerAccountPage(
+        LocalDatabaseService databaseService)
     {
         InitializeComponent();
 
-        _apiService = new ApiService();
+        _databaseService = databaseService;
 
-        LoadCustomers();
+        Loaded += async (_, _) =>
+        {
+            await LoadCustomersAsync();
+        };
     }
 
-    private async void LoadCustomers()
+    private async Task LoadCustomersAsync()
     {
         try
         {
             var customers =
-                await _apiService.GetCustomersAsync();
+                await _databaseService.GetCustomersAsync();
 
             CustomerPicker.ItemsSource = customers;
+
             CustomerPicker.ItemDisplayBinding =
                 new Binding("Name");
         }
@@ -40,7 +46,8 @@ public partial class CustomerAccountPage : ContentPage
         object? sender,
         EventArgs e)
     {
-        if (CustomerPicker.SelectedItem is not Customer customer)
+        if (CustomerPicker.SelectedItem
+            is not Customer customer)
         {
             return;
         }
@@ -50,43 +57,74 @@ public partial class CustomerAccountPage : ContentPage
             LoadingIndicator.IsVisible = true;
             LoadingIndicator.IsRunning = true;
 
-            var account =
-                await _apiService.GetCustomerAccountAsync(
-                    customer.Id);
+            var customers =
+                await _databaseService.GetCustomersAsync();
 
-            if (account == null)
+            var selectedCustomer =
+                customers.FirstOrDefault(
+                    c => c.Id == customer.Id);
+
+            if (selectedCustomer == null)
             {
                 await DisplayAlertAsync(
                     "Error",
-                    "Customer account could not be loaded.",
+                    "Customer could not be found.",
                     "OK");
 
                 return;
             }
 
+            var sales =
+                await _databaseService.GetSalesAsync();
+
+            var customerSales =
+                sales
+                    .Where(s =>
+                        s.CustomerId == selectedCustomer.Id)
+                    .OrderByDescending(s => s.SaleDate)
+                    .ToList();
+
+            decimal totalPurchases =
+                customerSales.Sum(s => s.TotalAmount);
+
+            decimal totalPaid =
+                customerSales.Sum(s => s.AmountPaid);
+
+            decimal outstandingBalance =
+                customerSales.Sum(s => s.BalanceDue);
+
+            decimal availableCredit =
+                selectedCustomer.CreditLimit
+                - outstandingBalance;
+
+            if (availableCredit < 0)
+            {
+                availableCredit = 0;
+            }
+
             CustomerNameLabel.Text =
-                $"Customer: {account.Name}";
+                $"Customer: {selectedCustomer.Name}";
 
             PhoneLabel.Text =
-                $"Phone: {account.Phone ?? "-"}";
+                $"Phone: {selectedCustomer.Phone ?? "-"}";
 
             CreditLimitLabel.Text =
-                $"Credit Limit: Ksh {account.CreditLimit:N2}";
+                $"Credit Limit: Ksh {selectedCustomer.CreditLimit:N2}";
 
             TotalPurchasesLabel.Text =
-                $"Total Purchases: Ksh {account.TotalPurchases:N2}";
+                $"Total Purchases: Ksh {totalPurchases:N2}";
 
             TotalPaidLabel.Text =
-                $"Total Paid: Ksh {account.TotalPaid:N2}";
+                $"Total Paid: Ksh {totalPaid:N2}";
 
             BalanceLabel.Text =
-                $"Outstanding Balance: Ksh {account.OutstandingBalance:N2}";
+                $"Outstanding Balance: Ksh {outstandingBalance:N2}";
 
             AvailableCreditLabel.Text =
-                $"Available Credit: Ksh {account.AvailableCredit:N2}";
+                $"Available Credit: Ksh {availableCredit:N2}";
 
             SalesCollection.ItemsSource =
-                account.Sales;
+                customerSales;
         }
         catch (Exception ex)
         {

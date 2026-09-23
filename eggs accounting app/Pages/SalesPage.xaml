@@ -21,12 +21,15 @@
                 x:Name="CustomerPicker"
                 Title="Select Customer" />
 
-            <Label Text="Product" />
+            <Label
+                Text="Egg Grade / Product"
+                FontAttributes="Bold" />
 
             <Picker
                 x:Name="ProductPicker"
-                Title="Select Product"
-                ItemDisplayBinding="{Binding Name}" />
+                Title="Select egg grade"
+                ItemDisplayBinding="{Binding DisplayName}"
+                SelectedIndexChanged="OnProductChanged" />
 
             <Label Text="Quantity (Crates)" />
 
